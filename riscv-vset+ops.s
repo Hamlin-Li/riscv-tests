@@ -28,8 +28,8 @@ ret
 
     .text                     # Start text section
     .balign 4                 # align 4 byte instructions by 4 bytes
-    .global vaddx_char
-vaddx_char:
+    .global vops_char
+vops_char:
     vid.v v16
     vadd.vx v8, v16, a0
     vredsum.vs v16, v8, v16
@@ -38,8 +38,8 @@ ret
 
     .text                     # Start text section
     .balign 4                 # align 4 byte instructions by 4 bytes
-    .global vaddx_short
-vaddx_short:
+    .global vops_short
+vops_short:
     vid.v v16
     vadd.vx v8, v16, a0
     vredsum.vs v16, v8, v16
@@ -48,8 +48,8 @@ ret
 
     .text                     # Start text section
     .balign 4                 # align 4 byte instructions by 4 bytes;
-    .global vaddx_int
-vaddx_int:
+    .global vops_int
+vops_int:
     vid.v v16
     vadd.vx v8, v16, a0
     vredsum.vs v16, v8, v16
@@ -58,8 +58,8 @@ ret
 
     .text                     # Start text section
     .balign 4                 # align 4 byte instructions by 4 bytes
-    .global vaddx_long
-vaddx_long:
+    .global vops_long
+vops_long:
     vid.v v16
     vadd.vx v8, v16, a0
     vredsum.vs v16, v8, v16

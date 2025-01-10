@@ -9,29 +9,29 @@ extern void vset_e16_m8();
 extern void vset_e32_m8();
 extern void vset_e64_m8();
 
-extern char vaddx_char(char c);
-extern short vaddx_short(short s);
-extern int vaddx_int(int i);
-extern long vaddx_long(long l);
+extern char vops_char(char c);
+extern short vops_short(short s);
+extern int vops_int(int i);
+extern long vops_long(long l);
 
 long vset_test_static(long l, const int outer_loop, const int inner_loop) {
 
   for (int j = 0; j < outer_loop; j++) {
     vset_e8_m8();
     for (int i = 0; i < inner_loop; i++) {
-      l = vaddx_char((char)l);
+      l = vops_char((char)l);
     }
     vset_e16_m8();
     for (int i = 0; i < inner_loop; i++) {
-      l = vaddx_short((short)l);
+      l = vops_short((short)l);
     }
     vset_e32_m8();
     for (int i = 0; i < inner_loop; i++) {
-      l = vaddx_int((int)l);
+      l = vops_int((int)l);
     }
     vset_e64_m8();
     for (int i = 0; i < inner_loop; i++) {
-      l = vaddx_long((long)l);
+      l = vops_long((long)l);
     }
   }
 }
@@ -41,19 +41,19 @@ long vset_test_static_redundant(long l, const int outer_loop, const int inner_lo
   for (int j = 0; j < outer_loop; j++) {
     for (int i = 0; i < inner_loop; i++) {
       vset_e8_m8();
-      l = vaddx_char((char)l);
+      l = vops_char((char)l);
     }
     for (int i = 0; i < inner_loop; i++) {
       vset_e16_m8();
-      l = vaddx_short((short)l);
+      l = vops_short((short)l);
     }
     for (int i = 0; i < inner_loop; i++) {
       vset_e32_m8();
-      l = vaddx_int((int)l);
+      l = vops_int((int)l);
     }
     for (int i = 0; i < inner_loop; i++) {
       vset_e64_m8();
-      l = vaddx_long((long)l);
+      l = vops_long((long)l);
     }
   }
 }
@@ -63,29 +63,19 @@ long vset_test_dynamic(long l, const int outer_loop, const int inner_loop) {
   for (int j = 0; j < outer_loop; j++) {
     for (int i = 0; i < inner_loop; i++) {
       vset_e8_m8();
-      l = vaddx_char((char)l);
+      l = vops_char((char)l);
       vset_e16_m8();
-      l = vaddx_short((short)l);
+      l = vops_short((short)l);
       vset_e32_m8();
-      l = vaddx_int((int)l);
+      l = vops_int((int)l);
       vset_e64_m8();
-      l = vaddx_long((long)l);
+      l = vops_long((long)l);
     }
   }
 }
 
-void vset_ops_tests() {
+void vset_ops_test(const int outer_loop) {
   long l = 1;
-  // vset_test_static takes 126266 us
-  // vset_test_static_redundant takes 139398 us
-  // vset_test_dynamic takes 137694 us
-  const int outer_loop = 100000;
-
-  // vset_test_static takes 1267081 us
-  // vset_test_static_redundant takes 1399254 us
-  // vset_test_dynamic takes 1382531 us
-  //  const int outer_loop = 1000000;
-
   const int inner_loop = 8;
   long(*vset_tests[3])(long, const int, const int) = {&vset_test_static, &vset_test_static_redundant, &vset_test_dynamic};
   char* names[3] = {"vset_test_static", "vset_test_static_redundant", "vset_test_dynamic"};
@@ -99,6 +89,29 @@ void vset_ops_tests() {
     printf("%s takes %lu us\n", names[i], (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
   }
   printf("result: %ld\n", l);
+}
+
+void vset_ops_tests() {
+  long l = 1;
+  // loop: 100000
+  // vset_test_static takes 126266 us
+  // vset_test_static_redundant takes 139398 us
+  // vset_test_dynamic takes 137694 us
+
+  // loop: 1000000
+  // vset_test_static takes 1267081 us
+  // vset_test_static_redundant takes 1399254 us
+  // vset_test_dynamic takes 1382531 us
+
+  // loop: 10000000
+  // vset_test_static takes 12617675 us
+  // vset_test_static_redundant takes 13937966 us
+  // vset_test_dynamic takes 13768986 us
+
+  int out_loops[3] = {100000, 1000000, 10000000};
+  for (int i = 0; i < sizeof(out_loops)/sizeof(int); i++) {
+    vset_ops_test(out_loops[i]);
+  }
 }
 
 
