@@ -67,17 +67,3 @@ vaddx_long:
 ret
 
 
-
-    .text                     # Start text section
-    .balign 4                 # align 4 byte instructions by 4 bytes
-    # .global _start            # global
-    .global cbo_zero # global
-cbo_zero:
-Loop1:
-	cbo.zero 0(a0)
-	addi a0, a0, 64
-	addi a1, a1, -1
-	bgt a1, x0, Loop1
-ret
-
-
