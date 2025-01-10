@@ -36,6 +36,32 @@ long vset_test_static(long l, const int outer_loop, const int inner_loop) {
   }
 }
 
+long vset_test_static_condition(long l, const int outer_loop, const int inner_loop) {
+
+  for (int j = 0; j < outer_loop; j++) {
+    vset_e8_m8();
+    for (int i = 0; i < inner_loop; i++) {
+      if ((i%2) == (j%2)) { vset_e8_m8(); }
+      l = vops_char((char)l);
+    }
+    vset_e16_m8();
+    for (int i = 0; i < inner_loop; i++) {
+      if ((i%2) == (j%2)) { vset_e16_m8(); }
+      l = vops_short((short)l);
+    }
+    vset_e32_m8();
+    for (int i = 0; i < inner_loop; i++) {
+      if ((i%2) == (j%2)) { vset_e32_m8(); }
+      l = vops_int((int)l);
+    }
+    vset_e64_m8();
+    for (int i = 0; i < inner_loop; i++) {
+      if ((i%2) == (j%2)) { vset_e64_m8(); }
+      l = vops_long((long)l);
+    }
+  }
+}
+
 long vset_test_static_redundant(long l, const int outer_loop, const int inner_loop) {
 
   for (int j = 0; j < outer_loop; j++) {
@@ -77,9 +103,10 @@ long vset_test_dynamic(long l, const int outer_loop, const int inner_loop) {
 void vset_ops_test(const int outer_loop) {
   long l = 1;
   const int inner_loop = 8;
-  long(*vset_tests[3])(long, const int, const int) = {&vset_test_static, &vset_test_static_redundant, &vset_test_dynamic};
-  char* names[3] = {"vset_test_static", "vset_test_static_redundant", "vset_test_dynamic"};
-  for (int i = 0; i < 3; i++) {
+#define COUNT 4
+  long(*vset_tests[COUNT])(long, const int, const int) = {&vset_test_static, &vset_test_static_condition, &vset_test_static_redundant, &vset_test_dynamic};
+  char* names[COUNT] = {"vset_test_static", "vset_test_static_condition", "vset_test_static_redundant", "vset_test_dynamic"};
+  for (int i = 0; i < COUNT; i++) {
     struct timeval stop, start;
     gettimeofday(&start, NULL);
 
@@ -94,19 +121,15 @@ void vset_ops_test(const int outer_loop) {
 void vset_ops_tests() {
   long l = 1;
   // loop: 100000
-  // vset_test_static takes 126266 us
-  // vset_test_static_redundant takes 139398 us
-  // vset_test_dynamic takes 137694 us
-
+  //  vset_test_static takes 126241 us
+  //  vset_test_static_condition takes 137494 us
+  //  vset_test_static_redundant takes 139417 us
+  //  vset_test_dynamic takes 137705 us
   // loop: 1000000
-  // vset_test_static takes 1267081 us
-  // vset_test_static_redundant takes 1399254 us
-  // vset_test_dynamic takes 1382531 us
-
-  // loop: 10000000
-  // vset_test_static takes 12617675 us
-  // vset_test_static_redundant takes 13937966 us
-  // vset_test_dynamic takes 13768986 us
+  //  vset_test_static takes 1262085 us
+  //  vset_test_static_condition takes 1374732 us
+  //  vset_test_static_redundant takes 1393921 us
+  //  vset_test_dynamic takes 1376919 us
 
   int out_loops[3] = {100000, 1000000, 10000000};
   for (int i = 0; i < sizeof(out_loops)/sizeof(int); i++) {
